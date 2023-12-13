@@ -2,13 +2,16 @@ from django.db import models
 from django.urls import reverse
 
 
-# A tuple of 2-tuples
-MEALS = (
-    ('B', 'Breakfast'),
-    ('L', 'Lunch'),
-    ('D', 'Dinner')
-)
+# you can access the cat with cat_set when you have toy
+class House(models.Model):
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('house_detail', kwargs={'pk': self.id})
 
 # Create your models here.
 class Bird(models.Model):
@@ -23,6 +26,14 @@ class Bird(models.Model):
     def get_absolute_url(self):
         return reverse('detail', kwargs={'bird_id': self.id})
     
+# A tuple of 2-tuples
+MEALS = (
+    ('B', 'Breakfast'),
+    ('L', 'Lunch'),
+    ('D', 'Dinner')
+)
+
+
 class Feeding(models.Model):
     date = models.DateField('feeding date')
     meal = models.CharField(
@@ -36,3 +47,6 @@ class Feeding(models.Model):
 
     def __str__(self):
         return f"{self.get_meal_display()} on {self.date}"
+    
+    class Meta:
+        ordering = ['-date']
