@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+
+
+<!-- two variables from the update, they have same values
+object - current instance 
+lowercase model name - current instance 
+
+in our case. Our two variables are 
+
+object 
+bird -->
+
+<!-- object will have a value of None when we are creating something -->
+
+{% if object %}
+	<h1>Edit <span class="teal-text">{{ object.name }}</span></h1>
+{% else %}
+	<h1>Add Bird</h1>
+{% endif %}
+	
+
+
+
+<!-- Leave our action blank, it will make a post request to the same 
+url used to display it, in our case birds/create -->
+<form action="" method="POST">
+	<!-- we need the csrf token in every form for security 
+	purposes -->
+	{% csrf_token %} 
+	<table>
+		<!-- We get the form variable from our CBV (BirdsCreate view function) -->
+		{{ form.as_table }}
+	</table>
+	<button type="submit" class="btn">Submit</button>
+</form>
+	
+{% endblock content %}
+	

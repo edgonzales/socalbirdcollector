@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Bird
 
 # views.py
@@ -8,6 +9,19 @@ from .models import Bird
 #   {'name': 'Novie', 'breed': 'turkey vulture', 'description': 'furry little demon', 'age': 3},
 #   {'name': 'Woody', 'breed': 'acorn woodpecker', 'description': 'gentle and loving', 'age': 2},
 # ]
+
+class BirdCreate(CreateView):
+  model = Bird
+  fields = '__all__'
+
+class BirdUpdate(UpdateView):
+  model = Bird
+  # Let's disallow the renaming of a Bird by excluding the name field!
+  fields = ['breed', 'description', 'age']
+
+class BirdDelete(DeleteView):
+  model = Bird
+  success_url = '/birds'
 
 
 # Create your views here.

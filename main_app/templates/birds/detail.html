@@ -11,10 +11,14 @@
         <p>Breed: {{ bird.breed }}</p>
         <p>Description: {{ bird.description|linebreaks }}</p>
         {% if bird.age > 0 %}
-        <p>Age: {{ bird.age }}</p>
+            <p>Age: {{ bird.age }}</p>
         {% else %}
-        <p>Age: Kitten</p>
+            <p>Age: Birdie</p>
         {% endif %}
+    </div>
+    <div class="card-action">
+        <a href="{% url 'birds_update' bird.id %}">Edit</a>
+        <a href="{% url 'birds_delete' bird.id %}">Delete</a>
     </div>
 </div>
 
