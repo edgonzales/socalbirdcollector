@@ -1,6 +1,9 @@
+# main_app/views.py
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Bird
+from .forms import FeedingForm
+from django.shortcuts import render, redirect
 
 # views.py
 
@@ -39,4 +42,17 @@ def birds_index(request):
 
 def birds_detail(request, bird_id):
   bird = Bird.objects.get(id=bird_id)
-  return render(request, 'birds/detail.html', {'bird': bird})
+  feeding_form = FeedingForm()
+  return render(request, 'birds/detail.html', {'bird': bird, 'feeding_form': feeding_form})
+
+def add_feeding(request, bird_id):
+  # create a ModelForm instance using the data in request.POST
+  form = FeedingForm(request.POST)
+  # validate the form
+  if form.is_valid():
+    # don't save the form to the db until it
+    # has the bird_id assigned
+    new_feeding = form.save(commit=False)
+    new_feeding.bird_id = bird_id
+    new_feeding.save()
+  return redirect('detail', bird_id=bird_id)
