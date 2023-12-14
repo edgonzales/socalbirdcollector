@@ -27,6 +27,14 @@ class Bird(models.Model):
     def get_absolute_url(self):
         return reverse('detail', kwargs={'bird_id': self.id})
     
+class Photo(models.Model):
+    url = models.CharField(max_length=200)
+    cat = models.ForeignKey(Bird, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Photo for bird_id: {self.bird_id} @{self.url}"
+
+    
 # A tuple of 2-tuples
 MEALS = (
     ('B', 'Breakfast'),
