@@ -29,12 +29,12 @@ class Bird(models.Model):
     
 class Photo(models.Model):
     url = models.CharField(max_length=200)
-    cat = models.ForeignKey(Bird, on_delete=models.CASCADE)
+    bird = models.ForeignKey(Bird, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Photo for bird_id: {self.bird_id} @{self.url}"
 
-    
+
 # A tuple of 2-tuples
 MEALS = (
     ('B', 'Breakfast'),
@@ -51,7 +51,7 @@ class Feeding(models.Model):
         default=MEALS[0][0]
         )
     
-    # Create a cat_id FK
+    # Create a bird_id FK
     bird = models.ForeignKey(Bird, on_delete=models.CASCADE)
 
     def __str__(self):

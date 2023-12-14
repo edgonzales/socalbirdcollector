@@ -17,21 +17,24 @@ import os
 #   {'name': 'Woody', 'breed': 'acorn woodpecker', 'description': 'gentle and loving', 'age': 2},
 # ]
 
-def add_photo(request, cat_id):
+def add_photo(request, bird_id):
   photo_file = request.FILES.get('photo-file', None)
   if photo_file:
     s3 = boto3.client('s3')
     key = f"socalbirdcollector/{uuid.uuid4().hex[:6]}{photo_file.name[photo_file.name.rfind('.'):]}"
     try:
       bucket = os.environ['BUCKET_NAME']
+			# upload to aws, file, bucket name, where you want to store it in bucket
       s3.upload_fileobj(photo_file, bucket, key)
+			# build the url to save to the database
       photo_url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
-      Photo.objects.create(url=photo_url, cat_id=cat_id)
+			# save the url to the Photo Model
+      Photo.objects.create(url=photo_url, bird_id=bird_id)
 
     except Exception as e:
       print('An error uploading to AWS')
       print(e)
-  return redirect('detail', cat_id=cat_id)
+  return redirect('detail', bird_id=bird_id)
 
 class BirdCreate(CreateView):
   model = Bird
