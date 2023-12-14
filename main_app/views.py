@@ -1,19 +1,37 @@
 # main_app/views.py
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 
-from .models import Bird, House
-from .forms import FeedingForm
-from django.shortcuts import render, redirect
+from .models import Bird, House, Photo
 
-# views.py
+from .forms import FeedingForm
+
+import boto3
+import uuid
+import os
 
 # Add this cats list below the imports
 # birds = [
 #   {'name': 'Novie', 'breed': 'turkey vulture', 'description': 'furry little demon', 'age': 3},
 #   {'name': 'Woody', 'breed': 'acorn woodpecker', 'description': 'gentle and loving', 'age': 2},
 # ]
+
+def add_photo(request, cat_id):
+  photo_file = request.FILES.get('photo-file', None)
+  if photo_file:
+    s3 = boto3.client('s3')
+    key = f"socalbirdcollector/{uuid.uuid4().hex[:6]}{photo_file.name[photo_file.name.rfind('.'):]}"
+    try:
+      bucket = os.environ['BUCKET_NAME']
+      s3.upload_fileobj(photo_file, bucket, key)
+      photo_url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+      Photo.objects.create(url=photo_url, cat_id=cat_id)
+
+    except Exception as e:
+      print('An error uploading to AWS')
+      print(e)
+  return redirect('detail', cat_id=cat_id)
 
 class BirdCreate(CreateView):
   model = Bird
