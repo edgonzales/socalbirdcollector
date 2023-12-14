@@ -92,5 +92,5 @@ class HouseDelete(DeleteView):
 
 def assoc_house(request, bird_id, house_id):
   # Note that you can pass a house's id instead of the whole house object
-  House.objects.get(id=bird_id).houses.add(house_id)
+  Bird.objects.get(id=bird_id).houses.add(house_id)
   return redirect('detail', bird_id=bird_id)

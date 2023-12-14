@@ -11,7 +11,7 @@ class House(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('house_detail', kwargs={'pk': self.id})
+        return reverse('houses_detail', kwargs={'pk': self.id})
 
 # Create your models here.
 class Bird(models.Model):

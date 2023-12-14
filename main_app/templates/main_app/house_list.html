@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>House List</h1>
+
+you get two variables in the list page (index page)
+
+<!-- <model_name>_list 
+object_list -->
+
+<!-- house_list 
+object_list -->
+
+{% for house in house_list %}
+<a href="{% url 'houses_detail' house.id %}">
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">{{ house.name }}</span>
+            <p>Color: {{ house.color }}</p>
+        </div>
+    </div>
+</a>
+{% endfor %}
+
+{% endblock %}
