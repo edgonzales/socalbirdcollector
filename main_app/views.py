@@ -1,7 +1,9 @@
 # main_app/views.py
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Bird
+from django.views.generic import ListView, DetailView
+
+from .models import Bird, House
 from .forms import FeedingForm
 from django.shortcuts import render, redirect
 
@@ -15,7 +17,7 @@ from django.shortcuts import render, redirect
 
 class BirdCreate(CreateView):
   model = Bird
-  fields = '__all__'
+  fields = ['name', 'breed', 'description', 'age']
 
 class BirdUpdate(UpdateView):
   model = Bird
@@ -42,8 +44,16 @@ def birds_index(request):
 
 def birds_detail(request, bird_id):
   bird = Bird.objects.get(id=bird_id)
+    # First, create a list of the toy ids that the cat DOES have
+  id_list = bird.houses.all().values_list('id')
+  # Now we can query for toys whose ids are not in the list using exclude
+  houses_bird_doesnt_have = House.objects.exclude(id__in=id_list)
   feeding_form = FeedingForm()
-  return render(request, 'birds/detail.html', {'bird': bird, 'feeding_form': feeding_form})
+  return render(request, 'birds/detail.html', {
+    'bird': bird, 'feeding_form': feeding_form,
+    # Add the houses to be displayed
+    'houses': houses_bird_doesnt_have
+    })
 
 def add_feeding(request, bird_id):
   # create a ModelForm instance using the data in request.POST
@@ -55,4 +65,32 @@ def add_feeding(request, bird_id):
     new_feeding = form.save(commit=False)
     new_feeding.bird_id = bird_id
     new_feeding.save()
+  return redirect('detail', bird_id=bird_id)
+
+
+class HouseList(ListView):
+  model = House
+
+
+class HouseDetail(DetailView):
+  model = House
+
+
+class HouseCreate(CreateView):
+  model = House
+  fields = '__all__'
+
+
+class HouseUpdate(UpdateView):
+  model = House
+  fields = ['name', 'color']
+
+
+class HouseDelete(DeleteView):
+  model = House
+  success_url = '/houses/'
+
+def assoc_house(request, bird_id, house_id):
+  # Note that you can pass a house's id instead of the whole house object
+  House.objects.get(id=bird_id).houses.add(house_id)
   return redirect('detail', bird_id=bird_id)
